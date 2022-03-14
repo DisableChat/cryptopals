@@ -111,7 +111,7 @@ mod set_1 {
     fn test_hex_to_base64_as_string() {
         let input: &str     = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
         let expected_result = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
-        assert_eq!(expected_result, hex_to_base64_as_string(input));
+        assert_eq!(hex_to_base64_as_string(input), expected_result);
     }
 
 #[test]
@@ -120,7 +120,7 @@ mod set_1 {
         let arg_two: &str ="686974207468652062756c6c277320657965";
         let expected_result = "746865206b696420646f6e277420706c6179";
 
-        assert_eq!(expected_result, fixed_xor(arg_one, arg_two));
+        assert_eq!(fixed_xor(arg_one, arg_two), expected_result);
     }
 
 #[test]
@@ -128,7 +128,7 @@ mod set_1 {
         let expected_result = 'X';
         let input: &str = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
 
-        assert_eq!(expected_result, single_byte_xor_cipher(input)?);
+        assert_eq!(single_byte_xor_cipher(input)?, expected_result);
         Ok(())
     }
 
@@ -138,7 +138,7 @@ mod set_1 {
         let key = 'X';
         let input: &str = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
 
-        assert_eq!(expected_result, orignal_message_as_string(&key, input)?);
+        assert_eq!(orignal_message_as_string(&key, input)?, expected_result);
         Ok(())
     }
 }
