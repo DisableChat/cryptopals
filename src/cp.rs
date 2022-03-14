@@ -91,6 +91,14 @@ pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, St
 
     Ok(decoded_message.to_string())
 }
+
+#[allow(dead_code)]
+pub fn single_character_XOR_detect()
+{
+    //read file and do stuff
+}
+
+
 #[cfg(test)] 
 mod set_one{
     use super::*;
