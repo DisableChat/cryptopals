@@ -16,12 +16,13 @@ fn main() {
     };
     */
 
-    single_character_xor_detect(cp::S1C4_FILE);
+    if let Ok(decoded_msg) = single_character_xor_detect(cp::S1C4_FILE) {
+        println!("Decoded Message: {}", decoded_msg);
+    };
+
     let paths = fs::read_dir("./").unwrap();
 
     for path in paths {
         println!("Name: {}", path.unwrap().path().display())
     }
-
-    single_character_xor_detect(cp::S1C4_FILE);
 }

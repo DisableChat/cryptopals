@@ -10,7 +10,7 @@ use std::path::Path;
 use std::str;
 
 //pub static S1C4_FILE_CONTENTS: &'static str = include_str!(".././data/set1_challenge4.txt");
-pub static S1C4_FILE: &'static str = ".././data/set1_challenge4.txt";
+pub static S1C4_FILE: &'static str = "./data/set1_challenge4.txt";
 
 #[allow(dead_code)]
 pub fn hex_to_base64_as_string(hex_input: &str) -> String {
@@ -50,13 +50,8 @@ pub fn fixed_xor(hex_input_one: &str, hex_input_two: &str) -> String {
 // Probably should of just uppercased the string so that the ETAOIN SHRDLU wouldn't need lowercase
 // Also doesn't handle if there is a tie situation
 #[allow(dead_code)]
-pub fn single_byte_xor_cipher(input: &str) -> Result<char, String> {
-    let alphabet: Vec<u8> = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        .as_bytes()
-        .to_vec();
+pub fn single_byte_xor_cipher(input: &str) -> Result<(char, u8), String> {
     let char_freq: Vec<u8> = "etaoinshrdlu ETAOINSHRDLU".as_bytes().to_vec();
-
-    //println!("rip idk {:?}", hex_to_base64_as_string(&input));
     let input = input.from_hex().expect("from hex error | arg 1 invalid");
     let mut high_score = 0;
     let mut key: char = ' ';
@@ -80,15 +75,14 @@ pub fn single_byte_xor_cipher(input: &str) -> Result<char, String> {
         }
     }
 
-    println!("this is the high schore {:?}", high_score);
-    Ok(key)
+    Ok((key, high_score))
 }
 
 #[allow(dead_code)]
 pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, Utf8Error> {
     let u8_msg_vec = message.from_hex().expect("from hex error | arg 1 invalid");
     let mut u8_decoded_msg_vec = Vec::new();
-    let mut decoded_message: &str = " ";
+    let decoded_message: &str;
     //let decoded_message: String;
 
     for letter in &u8_msg_vec {
@@ -103,38 +97,41 @@ pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, Ut
         }
         Err(e) => Err(e),
     }
-
-    //Ok(decoded_message.to_string())
 }
+
 // Make a struct to hold the from hex string, key and decripted mssg
 pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Error> {
     println!("this is the file {}", filepath);
     let file = File::open(filepath)?;
     let reader = BufReader::new(file);
+    let mut results: Vec<(char, u8, String)> = Vec::new();
 
     for line in reader.lines() {
         match line {
             Ok(res) => {
-                //match single_byte_xor_cipher(&res) {
-                if let Ok(key) = single_byte_xor_cipher(&res) {
+                if let Ok((key, key_weight)) = single_byte_xor_cipher(&res) {
                     if let Ok(msg) = orignal_message_as_string(&key, &res) {
-                        println!("Decoded Message: {}", msg);
+                        //println!("Key {}, Key Weight {}\nDecoded Message: {}", key, key_weight, msg);
+                        results.push((key, key_weight, msg));
                     };
                 };
-                /*Ok(key) => {
-                    if let Ok(msg) = orignal_message_as_string(&key, &res) {
-                        println!("Decoded Message: {}", msg);
-                    };
-                }*/
-                //Err(e) => println!("Failed to find key for msg: {}", e),
             }
-            //}
             Err(e) => println!("Xor detect failed: {}", e),
         }
-        //println!("line ? {:?}", line.unwrap());
     }
-    Ok("fuck".to_string())
-    //let reader = BufReader::new(file);
+
+    let mut best_key_weight = 0;
+    let mut secret_message: String = "".to_string();
+    for i in results {
+        if i.1 > best_key_weight {
+            best_key_weight = i.1;
+            secret_message = i.2;
+        }
+    }
+
+    // Secret message still has newline, prob wana remove that at some point rip
+    //println!("Secret Message: {}", secret_message);
+    Ok(secret_message)
 }
 
 #[cfg(test)]
