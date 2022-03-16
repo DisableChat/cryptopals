@@ -1,14 +1,16 @@
 extern crate rustc_serialize as serialize;
-use core::str;
+use core::str::*;
 use serialize::base64::{self, ToBase64};
 use serialize::hex::{FromHex, ToHex};
 use std::fs;
 use std::fs::File;
-use std::io::{self, BufRead};
+use std::io::prelude::*;
+use std::io::{self, BufReader, Lines};
 use std::path::Path;
+use std::str;
 
-pub static S1C4_FILE_CONTENTS: &'static str = include_str!(".././data/set1_challenge4.txt");
-pub static S1C4_FILE: &'static str = "./data/set1_challenge4.txt";
+//pub static S1C4_FILE_CONTENTS: &'static str = include_str!(".././data/set1_challenge4.txt");
+pub static S1C4_FILE: &'static str = ".././data/set1_challenge4.txt";
 
 #[allow(dead_code)]
 pub fn hex_to_base64_as_string(hex_input: &str) -> String {
@@ -54,17 +56,18 @@ pub fn single_byte_xor_cipher(input: &str) -> Result<char, String> {
         .to_vec();
     let char_freq: Vec<u8> = "etaoinshrdlu ETAOINSHRDLU".as_bytes().to_vec();
 
-    println!("rip idk {:?}", hex_to_base64_as_string(&input));
+    //println!("rip idk {:?}", hex_to_base64_as_string(&input));
     let input = input.from_hex().expect("from hex error | arg 1 invalid");
     let mut high_score = 0;
     let mut key: char = ' ';
 
-    for letter in alphabet {
+    for x in 0..=u8::MAX {
         let mut current_score = 0;
         let mut u8_msg_vec = Vec::new();
 
         for i in &input {
-            let val = i ^ letter;
+            let val = i ^ x;
+            //print! ("This is the values i: {}, x: {} xor {}", i, x , val);
             if char_freq.contains(&val) {
                 current_score += 1;
             }
@@ -74,7 +77,7 @@ pub fn single_byte_xor_cipher(input: &str) -> Result<char, String> {
         if current_score > high_score {
             high_score = current_score;
             //println!("this is the high schore {:?}", high_score);
-            key = letter as char;
+            key = x as char;
         }
     }
 
@@ -82,7 +85,7 @@ pub fn single_byte_xor_cipher(input: &str) -> Result<char, String> {
 }
 
 #[allow(dead_code)]
-pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, String> {
+pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, Utf8Error> {
     let u8_msg_vec = message.from_hex().expect("from hex error | arg 1 invalid");
     let mut u8_decoded_msg_vec = Vec::new();
     let mut decoded_message: &str = " ";
@@ -92,15 +95,45 @@ pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, St
         u8_decoded_msg_vec.push(letter ^ (*key as u8));
     }
 
-    decoded_message = match str::from_utf8(&u8_decoded_msg_vec) {
-        Ok(res) => res,
-        Err(_e) => &"NA",
-    };
+    //decoded_message = match str::from_utf8(&u8_decoded_msg_vec) {
+    match str::from_utf8(&u8_decoded_msg_vec) {
+        Ok(res) => {
+            decoded_message = res;
+            Ok(decoded_message.to_string())
+        }
+        Err(e) => Err(e),
+    }
 
-    Ok(decoded_message.to_string())
+    //Ok(decoded_message.to_string())
 }
-pub fn single_character_xor_detect(filename: &str) {
-    //rip
+
+pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Error> {
+    println!("this is the file {}", filepath);
+    let file = File::open(filepath)?;
+    let reader = BufReader::new(file);
+
+    for line in reader.lines() {
+        match line {
+            Ok(res) => {
+                match single_byte_xor_cipher(&res) {
+                    Ok(key) => {
+                        if let Ok(msg) = orignal_message_as_string(&key, &res) {
+                            println!("Decoded Message: {}", msg);
+                        };
+                        //Ok(msg) => println!("Decoded Message: {}", msg),
+                        //Err(e) => println!("Failed to decode original mssg: {}", e),
+                        //};
+                    }
+                    Err(e) => println!("Failed to find key for msg: {}", e),
+                };
+            }
+            Err(_) => println!("rip this thing failed"),
+        }
+        //println!("line ? {:?}", line.unwrap());
+    }
+    println!("fuck ");
+    Ok("fuck".to_string())
+    //let reader = BufReader::new(file);
 }
 
 #[cfg(test)]
