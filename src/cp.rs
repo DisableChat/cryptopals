@@ -76,11 +76,11 @@ pub fn single_byte_xor_cipher(input: &str) -> Result<char, String> {
 
         if current_score > high_score {
             high_score = current_score;
-            //println!("this is the high schore {:?}", high_score);
             key = x as char;
         }
     }
 
+    println!("this is the high schore {:?}", high_score);
     Ok(key)
 }
 
@@ -106,7 +106,7 @@ pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, Ut
 
     //Ok(decoded_message.to_string())
 }
-
+// Make a struct to hold the from hex string, key and decripted mssg
 pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Error> {
     println!("this is the file {}", filepath);
     let file = File::open(filepath)?;
@@ -115,23 +115,24 @@ pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Er
     for line in reader.lines() {
         match line {
             Ok(res) => {
-                match single_byte_xor_cipher(&res) {
-                    Ok(key) => {
-                        if let Ok(msg) = orignal_message_as_string(&key, &res) {
-                            println!("Decoded Message: {}", msg);
-                        };
-                        //Ok(msg) => println!("Decoded Message: {}", msg),
-                        //Err(e) => println!("Failed to decode original mssg: {}", e),
-                        //};
-                    }
-                    Err(e) => println!("Failed to find key for msg: {}", e),
+                //match single_byte_xor_cipher(&res) {
+                if let Ok(key) = single_byte_xor_cipher(&res) {
+                    if let Ok(msg) = orignal_message_as_string(&key, &res) {
+                        println!("Decoded Message: {}", msg);
+                    };
                 };
+                /*Ok(key) => {
+                    if let Ok(msg) = orignal_message_as_string(&key, &res) {
+                        println!("Decoded Message: {}", msg);
+                    };
+                }*/
+                //Err(e) => println!("Failed to find key for msg: {}", e),
             }
-            Err(_) => println!("rip this thing failed"),
+            //}
+            Err(e) => println!("Xor detect failed: {}", e),
         }
         //println!("line ? {:?}", line.unwrap());
     }
-    println!("fuck ");
     Ok("fuck".to_string())
     //let reader = BufReader::new(file);
 }
