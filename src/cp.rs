@@ -129,11 +129,11 @@ pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Er
 }
 
 pub trait XOR {
-    fn xor_(&self, _: &Self) -> Vec<u8>;
+    fn xor(&self, _: &Self) -> Vec<u8>;
 }
 
 impl XOR for [u8] {
-    fn xor_(&self, key: &[u8]) -> Vec<u8> {
+    fn xor(&self, key: &[u8]) -> Vec<u8> {
         let mut result = self.to_vec();
         for chunk in result.chunks_mut(key.len()) {
             let len = chunk.len();
@@ -190,7 +190,7 @@ mod set_one {
         Ok(())
     }
     #[test]
-    fn test_xor_() {
+    fn test_xor() {
         let key = b"ICE";
         let input = b"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
         assert_eq!(
@@ -199,7 +199,7 @@ mod set_one {
              272765272a282b2f20430a652e2c652a3\
              124333a653e2b2027630c692b20283165\
              286326302e27282f",
-            &input.xor_(key).to_hex()
+            &input.xor(key).to_hex()
         );
     }
 }
