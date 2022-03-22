@@ -14,7 +14,7 @@ Learning Rust and doing cool coding problems because its better than playing Lea
   - [x] Fixed XOR
   - [x] Single-byte XOR cipher
   - [x] Detect single-character XOR
-  - [ ] Implement repeating-key XOR
+  - [x] Implement repeating-key XOR
   - [ ] Break repeating-key XOR
   - [ ] AES in ECB mode
   - [ ] Detect AES in ECB mode
