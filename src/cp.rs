@@ -8,6 +8,7 @@ use std::io::BufReader;
 use std::str;
 
 pub static S1C4_FILE: &'static str = "./data/set1_challenge4.txt";
+pub static S1C6_FILE: &'static str = "./data/set1_challenge6.txt";
 
 #[allow(dead_code)]
 pub fn hex_to_base64_as_string(hex_input: &str) -> String {
