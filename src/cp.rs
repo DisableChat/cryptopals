@@ -5,10 +5,32 @@ use serialize::hex::{FromHex, ToHex};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::result::*;
 use std::str;
 
 pub static S1C4_FILE: &'static str = "./data/set1_challenge4.txt";
 pub static S1C6_FILE: &'static str = "./data/set1_challenge6.txt";
+
+pub fn hamming_distance(x: &[u8], y: &[u8]) -> Result<u32, String> {
+    if x.len() != y.len() {
+        return Err("Inputs do not have same length".into());
+    }
+    let tmp = x.xor(y);
+    let mut rip: u32 = 0;
+    for i in tmp {
+        rip += u32::from(nonzero_bits_count(i));
+    }
+    Ok(rip)
+}
+
+pub fn nonzero_bits_count(mut u_8: u8) -> u8 {
+    let mut result = 0u8;
+    for _ in 0..8 {
+        result += u_8 % 2;
+        u_8 >>= 1;
+    }
+    result
+}
 
 #[allow(dead_code)]
 pub fn hex_to_base64_as_string(hex_input: &str) -> String {
