@@ -7,31 +7,11 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::result::*;
 use std::str;
-use xor::XOR;
 
+#[allow(dead_code)]
 pub static S1C4_FILE: &'static str = "./data/set1_challenge4.txt";
+#[allow(dead_code)]
 pub static S1C6_FILE: &'static str = "./data/set1_challenge6.txt";
-
-pub fn hamming_distance(x: &[u8], y: &[u8]) -> Result<u32, String> {
-    if x.len() != y.len() {
-        return Err("Inputs do not have same length".into());
-    }
-    let tmp = x.xor(y);
-    let mut rip: u32 = 0;
-    for i in tmp {
-        rip += u32::from(nonzero_bits_count(i));
-    }
-    Ok(rip)
-}
-
-pub fn nonzero_bits_count(mut u_8: u8) -> u8 {
-    let mut result = 0u8;
-    for _ in 0..8 {
-        result += u_8 % 2;
-        u_8 >>= 1;
-    }
-    result
-}
 
 #[allow(dead_code)]
 pub fn hex_to_base64_as_string(hex_input: &str) -> String {
@@ -113,6 +93,7 @@ pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, Ut
 
 // TODO: Make a struct to hold the from hex string, key and secret message
 // This could allow possibly using rust combinators?
+#[allow(dead_code)]
 pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Error> {
     println!("this is the file {}", filepath);
     let file = File::open(filepath)?;
@@ -156,7 +137,7 @@ pub fn single_character_xor_detect(filepath: &str) -> Result<String, std::io::Er
 mod tests {
     use super::*;
     #[test]
-    fn test_hex_to_base64_as_string() {
+    fn c1_test_hex_to_base64_as_string() {
         let input: &str     = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
         let expected_result = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
 
@@ -164,7 +145,7 @@ mod tests {
     }
 
     #[test]
-    fn test_fixed_xor() {
+    fn c2_test_fixed_xor() {
         let arg_one: &str = "1c0111001f010100061a024b53535009181c";
         let arg_two: &str = "686974207468652062756c6c277320657965";
         let expected_result = "746865206b696420646f6e277420706c6179";
@@ -173,7 +154,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_byte_xor_cipher() -> Result<(), String> {
+    fn c3_test_single_byte_xor_cipher() -> Result<(), String> {
         let expected_result = ('X', 23);
         let input: &str = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
         assert_eq!(single_byte_xor_cipher(input)?, expected_result);
@@ -181,7 +162,7 @@ mod tests {
     }
 
     #[test]
-    fn test_original_message_as_string() -> Result<(), Utf8Error> {
+    fn c4_test_original_message_as_string() -> Result<(), Utf8Error> {
         let expected_result = "Cooking MC's like a pound of bacon";
         let key = 'X';
         let input: &str = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
@@ -191,7 +172,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_character_xor_detect() -> Result<(), std::io::Error> {
+    fn c4_test_single_character_xor_detect() -> Result<(), std::io::Error> {
         let expected_result = "Now that the party is jumping\n";
         assert_eq!(single_character_xor_detect(S1C4_FILE)?, expected_result);
         Ok(())

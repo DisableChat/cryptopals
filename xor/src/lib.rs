@@ -1,6 +1,3 @@
-extern crate rustc_serialize as serialize;
-use serialize::hex::{FromHex, ToHex};
-
 pub trait XOR {
     fn xor(&self, _: &Self) -> Vec<u8>;
 }
@@ -20,7 +17,10 @@ impl XOR for [u8] {
 
 #[cfg(test)]
 mod tests {
+    extern crate rustc_serialize as serialize;
     use super::*;
+    use serialize::hex::ToHex;
+
     #[test]
     fn test_xor() {
         let key = b"ICE";
