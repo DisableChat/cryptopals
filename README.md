@@ -1,11 +1,12 @@
 # cryptopals
 The cryptopals crypto challenges
 If you wana try them for yourself go to https://cryptopals.com/
+
 ## Description
 Learning Rust and doing cool coding problems because its better than playing League of Legends soloq in NA.
 
 ## Commands
-- `cargo test` from package root to run tests from previous challenges
+- `cargo nextest run` or `cargo test` to test completed challenges
 - `cargo run` built and excute generated binary (which is usually just the challenge im currently working on or just finished)
 
 ### Challenges
@@ -25,3 +26,5 @@ Learning Rust and doing cool coding problems because its better than playing Lea
 - [ ] **Set 6**
 - [ ] **Set 7**
 - [ ] **Set 8**
+
+***Make it work, make it right, make it fast. - Kent Beck***
