@@ -9,3 +9,4 @@ edition = "2021"
 xor = {path = "../xor", version = "0.1"}
 rustc-serialize = "0.3"
 liquid = "*"
+base64 = "0.13.0"
