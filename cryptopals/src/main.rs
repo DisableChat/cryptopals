@@ -13,8 +13,9 @@ fn main() {
         Ok(res) => print!("result: {:?}\n", res),
         Err(e) => print!("Error: {}\n", e),
     };
-    
-    let contents = from_base64_file(Path::new(set1::challenge6::S1C6_FILE)).expect("rip yo contents boi");
+
+    let contents =
+        from_base64_file(Path::new(set1::challenge6::S1C6_FILE)).expect("rip yo contents boi");
 
     let key_size = find_key_size(contents.as_slice());
     println!("key_size {}", key_size);
