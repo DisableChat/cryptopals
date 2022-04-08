@@ -19,5 +19,4 @@ fn main() {
 
     let key_size = find_key_size(contents.as_slice());
     println!("key_size {}", key_size);
-    // TODO take 4 KEYSIZE blocks instead of 2 and average the distances.
 }

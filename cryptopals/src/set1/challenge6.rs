@@ -2,17 +2,18 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 use std::io::Error;
-use std::io::Read;
 use std::path::Path;
 use xor::XOR;
 extern crate base64;
 extern crate rustc_serialize as serialize;
-use base64::{decode, decode_config_buf};
+use base64::decode_config_buf;
+
 #[allow(dead_code)]
 pub static S1C6_FILE: &'static str = "cryptopals/data/set1_challenge6.txt";
 
 const MIN_KEYSIZE: usize = 2;
 const MAX_KEYSIZE: usize = 40;
+const KEYSIZE_BLOCKS: usize = 4;
 
 pub fn hamming_distance(x: &[u8], y: &[u8]) -> Result<u32, String> {
     if x.len() != y.len() {
@@ -68,7 +69,13 @@ pub fn find_key_size(input: &[u8]) -> usize {
 
 pub fn normalized_key_size(input: &[u8], key_size: usize) -> f32 {
     let chunks: Vec<&[u8]> = input.chunks(key_size).collect();
-    let result = hamming_distance(chunks[0], chunks[1]).expect("Rip the the ham");
+    let mut distance_sum: f32 = 0.0;
 
-    result as f32 / key_size as f32
+    for i in 0..KEYSIZE_BLOCKS {
+        for j in i + 1..KEYSIZE_BLOCKS {
+            distance_sum += hamming_distance(chunks[i], chunks[j]).expect("Rip the the ham") as f32;
+        }
+    }
+
+    distance_sum as f32 / key_size as f32 * 100.0
 }
