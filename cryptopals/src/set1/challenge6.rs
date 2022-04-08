@@ -13,7 +13,7 @@ pub static S1C6_FILE: &'static str = "cryptopals/data/set1_challenge6.txt";
 
 const MIN_KEYSIZE: usize = 2;
 const MAX_KEYSIZE: usize = 40;
-const KEYSIZE_BLOCKS: usize = 4;
+const BLOCKS: usize = 4;
 
 pub fn hamming_distance(x: &[u8], y: &[u8]) -> Result<u32, String> {
     if x.len() != y.len() {
@@ -53,29 +53,26 @@ pub fn find_key_size(input: &[u8]) -> usize {
     let mut keysize_contenders: Vec<(usize, u32)> = Vec::new();
 
     for keysize in MIN_KEYSIZE..=MAX_KEYSIZE {
-        keysize_contenders.push((keysize, normalized_key_size(input, keysize) as u32));
+        keysize_contenders.push((keysize, normalized_key_size(input, keysize)));
     }
 
     // Er we want to sort by the min hamming_distance in this instance
-    //
-    // TODO: use a fn that is more clear in sorting. Sorting by key and then using the min hamming_distance
-    // seems a bit misleading because the key should be the key size?
     keysize_contenders.sort_by_key(|k| k.1);
-    println!("Keysize contenders{:?}", keysize_contenders);
+    //println!("Keysize contenders{:?}", keysize_contenders);
 
     // Get the first index value's keysize
     keysize_contenders[0].0
 }
 
-pub fn normalized_key_size(input: &[u8], key_size: usize) -> f32 {
+pub fn normalized_key_size(input: &[u8], key_size: usize) -> u32 {
     let chunks: Vec<&[u8]> = input.chunks(key_size).collect();
-    let mut distance_sum: f32 = 0.0;
+    let mut distance_sum: u32 = 0;
 
-    for i in 0..KEYSIZE_BLOCKS {
-        for j in i + 1..KEYSIZE_BLOCKS {
-            distance_sum += hamming_distance(chunks[i], chunks[j]).expect("Rip the the ham") as f32;
+    for i in 0..BLOCKS {
+        for j in (i + 1)..BLOCKS {
+            distance_sum += hamming_distance(chunks[i], chunks[j]).expect("Rip the the ham");
         }
     }
 
-    distance_sum as f32 / key_size as f32 * 100.0
+    (distance_sum as f32 / key_size as f32 * 100.0) as u32
 }
