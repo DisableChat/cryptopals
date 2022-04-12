@@ -79,3 +79,13 @@ pub fn normalized_key_size(input: &[u8], key_size: usize) -> f32 {
 
     distance_sum as f32 / key_size as f32 * 100.0
 }
+
+pub fn transpose_blocks(input: &[u8], key_size: usize) {
+    let mut transposed_blocks: Vec<Vec<u8>> = Vec::new();
+    for chunk in input.chunks(key_size) {
+        for (&i, x) in chunk.iter().zip(transposed_blocks.iter_mut()) {
+            x.push(i);
+        }
+    }
+    println!("transposed blocks\n {:?}", transposed_blocks);
+}
