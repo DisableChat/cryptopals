@@ -72,6 +72,32 @@ pub fn single_byte_xor_cipher(input: &str) -> Result<(char, u8), String> {
     Ok((key, high_score))
 }
 
+pub fn break_single_byte_xor(input: Vec<u8>) -> Result<(char, u8), String> {
+    let char_freq: Vec<u8> = "etaoinshrdlu ETAOINSHRDLU".as_bytes().to_vec();
+    let mut high_score = 0;
+    let mut key: char = ' ';
+
+    for x in 0..=u8::MAX {
+        let mut current_score = 0;
+        let mut u8_msg_vec = Vec::new();
+
+        for i in &input {
+            let val = i ^ x;
+            if char_freq.contains(&val) {
+                current_score += 1;
+            }
+            u8_msg_vec.push(val);
+        }
+
+        if current_score > high_score {
+            high_score = current_score;
+            key = x as char;
+        }
+    }
+
+    Ok((key, high_score))
+}
+
 #[allow(dead_code)]
 pub fn orignal_message_as_string(key: &char, message: &str) -> Result<String, Utf8Error> {
     let u8_msg_vec = message.from_hex().expect("from hex error | arg 1 invalid");
@@ -175,6 +201,16 @@ mod tests {
     fn c4_test_single_character_xor_detect() -> Result<(), std::io::Error> {
         let expected_result = "Now that the party is jumping\n";
         assert_eq!(single_character_xor_detect(S1C4_FILE)?, expected_result);
+        Ok(())
+    }
+
+    #[test]
+    fn c5_test_break_single_byte_xor() -> Result<(), String> {
+        let expected_result = ('X', 23);
+        let input = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+            .from_hex()
+            .expect("from hex error");
+        assert_eq!(break_single_byte_xor(input)?, expected_result);
         Ok(())
     }
 }

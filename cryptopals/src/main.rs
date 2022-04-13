@@ -20,10 +20,9 @@ fn main() {
     let key_size = find_key_size(contents.as_slice());
     println!("key_size {}", key_size);
 
-    let mut transposed_blocks: Vec<Vec<u8>> = transpose_blocks(contents.as_slice(), key_size);
+    let transposed_blocks: Vec<Vec<u8>> = transpose_blocks(contents.as_slice(), key_size);
     for i in transposed_blocks {
-        let tmp = single_byte_xor_cipher(str::from_utf8(&i).unwrap()).expect("rip");
-        println!("tmp {:?} {:?}", tmp.0, tmp.1);
+        let tmp = break_single_byte_xor(i).expect("rip");
+        println!("key and score {:?} {:?}", tmp.0, tmp.1);
     }
-    //transposed_blocks;
 }
